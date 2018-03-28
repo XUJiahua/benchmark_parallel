@@ -7,7 +7,7 @@ import (
 	"fmt"
 )
 
-type worker func() error
+type worker func(index int) error
 
 func Run(goroutines int, worker worker)  {
 	var wg sync.WaitGroup
@@ -15,12 +15,13 @@ func Run(goroutines int, worker worker)  {
 	var ops uint64
 
 	for i:= 0 ; i< goroutines; i++ {
+		index := i
 		wg.Add(1)
 		go func() {
 			t0 := time.Now()
 
 			// custom code
-			err := worker()
+			err := worker(index)
 			if err != nil {
 				atomic.AddUint64(&ops, 1)
 			}
